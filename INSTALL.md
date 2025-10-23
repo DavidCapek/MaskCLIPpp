@@ -1,5 +1,7 @@
 ## Installation
 
+> **Note:** For detailed CPU-only setup instructions and troubleshooting, see [CPU_SETUP_GUIDE.md](CPU_SETUP_GUIDE.md)
+
 ### Requirements
 - Linux with Python = 3.10
 - PyTorch = 2.3.1 and [torchvision](https://github.com/pytorch/vision/) that matches the PyTorch installation.
