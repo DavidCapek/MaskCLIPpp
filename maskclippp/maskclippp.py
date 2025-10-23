@@ -130,7 +130,12 @@ class MaskCLIPpp(nn.Module):
         else:
             print(f"Begin to prepare text classifiers: train[{len(train_sentences)}] test[{len(test_sentences)}]")
             local_rank = comm.get_local_rank()
-            text_encoder = text_encoder.to(device="cuda:%d" % local_rank)
+            # Support both CUDA and CPU
+            if torch.cuda.is_available():
+                device = torch.device("cuda:%d" % local_rank)
+            else:
+                device = torch.device("cpu")
+            text_encoder = text_encoder.to(device=device)
             
             train_t_embs = self._cal_text_emb(text_encoder, train_sentences, distributed=True)
             test_t_embs = self._cal_text_emb(text_encoder, test_sentences, distributed=True)
@@ -143,7 +148,12 @@ class MaskCLIPpp(nn.Module):
             
         if text_encoder_f is not None:
             local_rank = comm.get_local_rank()
-            text_encoder_f = text_encoder_f.to(device="cuda:%d" % local_rank)
+            # Support both CUDA and CPU
+            if torch.cuda.is_available():
+                device = torch.device("cuda:%d" % local_rank)
+            else:
+                device = torch.device("cpu")
+            text_encoder_f = text_encoder_f.to(device=device)
             # following are refer to fc-clip
             self.templates_f = templates_f
             test_sentences_f, _ = self._words_to_sentences(test_synonyms, templates_f)

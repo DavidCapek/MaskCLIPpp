@@ -199,24 +199,32 @@ class Trainer(DefaultTrainer):
             evaluator_list.append(SemSegEvaluator(dataset_name, distributed=True, output_dir=output_folder))
         # Cityscapes
         if evaluator_type == "cityscapes_instance":
+            # Support both CUDA and CPU
+            device_count = torch.cuda.device_count() if torch.cuda.is_available() else 1
             assert (
-                torch.cuda.device_count() > comm.get_rank()
+                device_count > comm.get_rank()
             ), "CityscapesEvaluator currently do not work with multiple machines."
             return CityscapesInstanceEvaluator(dataset_name)
         if evaluator_type == "cityscapes_sem_seg":
+            # Support both CUDA and CPU
+            device_count = torch.cuda.device_count() if torch.cuda.is_available() else 1
             assert (
-                torch.cuda.device_count() > comm.get_rank()
+                device_count > comm.get_rank()
             ), "CityscapesEvaluator currently do not work with multiple machines."
             return CityscapesSemSegEvaluator(dataset_name)
         if evaluator_type == "cityscapes_panoptic_seg":
             if cfg.MODEL.MASK_FORMER.TEST.SEMANTIC_ON:
+                # Support both CUDA and CPU
+                device_count = torch.cuda.device_count() if torch.cuda.is_available() else 1
                 assert (
-                    torch.cuda.device_count() > comm.get_rank()
+                    device_count > comm.get_rank()
                 ), "CityscapesEvaluator currently do not work with multiple machines."
                 evaluator_list.append(CityscapesSemSegEvaluator(dataset_name))
             if cfg.MODEL.MASK_FORMER.TEST.INSTANCE_ON:
+                # Support both CUDA and CPU
+                device_count = torch.cuda.device_count() if torch.cuda.is_available() else 1
                 assert (
-                    torch.cuda.device_count() > comm.get_rank()
+                    device_count > comm.get_rank()
                 ), "CityscapesEvaluator currently do not work with multiple machines."
                 evaluator_list.append(CityscapesInstanceEvaluator(dataset_name))
         # ADE20K

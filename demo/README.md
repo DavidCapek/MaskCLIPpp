@@ -17,6 +17,26 @@
 
 We provide two forms of demo. A gradio based `demo/app.py` for processing individual images and adjusting vocabularies. One is `demo/demo.py`, which is used on the command line and is suitable for batch processing multiple pictures or videos. The instructions are as follows:
 
+## Setup and Prerequisites
+
+Before running the demo, ensure you have:
+1. Installed all dependencies (see [INSTALL.md](../INSTALL.md))
+2. Downloaded a pre-trained model checkpoint
+3. (Optional) Verified your setup with the diagnostic script:
+
+```bash
+python demo/test_demo_setup.py
+```
+
+### Running on CPU
+
+The demo automatically detects whether CUDA is available. To run on CPU:
+- Simply run the demo commands as shown below
+- The code will automatically use CPU when CUDA is not available
+- Expect slower inference times on CPU
+
+For CPU-only setup instructions, see [CPU_SETUP_GUIDE.md](../CPU_SETUP_GUIDE.md).
+
 
 ## Gradio Demo
 
