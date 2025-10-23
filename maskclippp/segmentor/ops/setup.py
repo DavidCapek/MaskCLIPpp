@@ -36,8 +36,11 @@ def get_extensions():
     extra_compile_args = {"cxx": []}
     define_macros = []
 
-    # Force cuda since torch ask for a device, not if cuda is in fact available.
-    if (os.environ.get('FORCE_CUDA') or torch.cuda.is_available()) and CUDA_HOME is not None:
+    # Support both CUDA and CPU-only builds
+    # Set FORCE_CPU=1 to build CPU-only version (skips CUDA compilation)
+    force_cpu = os.environ.get('FORCE_CPU', '0') == '1'
+    
+    if not force_cpu and (os.environ.get('FORCE_CUDA') or torch.cuda.is_available()) and CUDA_HOME is not None:
         extension = CUDAExtension
         sources += source_cuda
         define_macros += [("WITH_CUDA", None)]
@@ -47,11 +50,11 @@ def get_extensions():
             "-D__CUDA_NO_HALF_CONVERSIONS__",
             "-D__CUDA_NO_HALF2_OPERATORS__",
         ]
+        print("Building with CUDA support")
     else:
-        if CUDA_HOME is None:
-            raise NotImplementedError('CUDA_HOME is None. Please set environment variable CUDA_HOME.')
-        else:
-            raise NotImplementedError('No CUDA runtime is found. Please set FORCE_CUDA=1 or test it by running torch.cuda.is_available().')
+        # Build CPU-only version
+        print("Building CPU-only version (CUDA extension will not be available)")
+        print("The code will automatically use pure PyTorch CPU fallback for deformable attention")
 
     sources = [os.path.join(extensions_dir, s) for s in sources]
     include_dirs = [extensions_dir]
